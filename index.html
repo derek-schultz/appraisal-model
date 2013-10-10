@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Computational Model of Appraisal</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">About</a></li>
+            <li><a href="#">Demo</a></li>
+          </ul>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </div>
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container">
+        <h1>Computational Model of Appraisal</h1>
+        <p>This project is an attempt at creating a computational appraisal model of the emotions of a virtual character. A robot waiter brings customers food while obstacles are added and removed. The waiter's emotions are altered in response to these random events.</p>
+        <p><a class="btn btn-primary btn-lg">Try the demo</a> <a class="btn btn-default btn-lg">Github</a></p>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <h1>The Model</h1>
+      <p>For this specific scenario, eight especially relevant emotions were chosen. Taking an approach inline with <a href="http://en.wikipedia.org/wiki/Opponent-process_theory" target="_blank">opponent-process theory</a>, these eight emotions were organized into the following pairs.
+
+      <ul>
+        <li>Hope / Fear</li>
+        <li>Joy / Frustration</li>
+        <li>Relief / Disappointment</li>
+        <li>Pride / Embarassment</li>
+      </ul>
+
+      These emotional states are represented in the model using a number between -1 and +1 for each pair. For example, if the waiter is very hopeful: <code>hope_fear = 0.8</code>. If the waiter is somewhat fearful: <code>hope_fear = -0.3</code>.
+
+      </p>
+
+      <p>In addition to storing values for the four emotion pairs, the waiter maintains the following knowledge of the world, based on which it can conduct its appraisal.</p>
+
+      <ul>
+        <li>Expected time based on past experience</li>
+        <li>Estimated time for this round</li>
+        <li>Elapsed time this round</li>
+        <li>Progress</li>
+        <li>Customer satisfaction</li>
+      </ul>
+
+      </p>
+
+      <h1>The Interface</h1>
+      <p>The values of the emotion pairs are represented using gauges that update as events unfold. Line charts show the immediate history for each gauge. The emotion pair with the highest absolute value is represented on the face of the robot as it traverses the map. The following face is used to represent all four positive emotions.<br>
+
+      <h4>Happy</h4>
+      <img src="img/happy.png" alt="Positive Emotion" class="img-thumbnail">
+
+      </p>
+
+      <p>Each of the four negative emotions has its own representation.</p>
+
+      <div class="row">
+        <div class="col-md-3"><h4>Fearful</h4><img src="img/fear.png" alt="Positive Emotion" class="img-thumbnail"></div>
+        <div class="col-md-3"><h4>Frustrated</h4><img src="img/frustration.png" alt="Positive Emotion" class="img-thumbnail"></div>
+        <div class="col-md-3"><h4>Disappointed</h4><img src="img/disappointment.png" alt="Positive Emotion" class="img-thumbnail"></div>
+        <div class="col-md-3"><h4>Embarassed</h4><img src="img/embarassment.png" alt="Positive Emotion" class="img-thumbnail"></div>
+      </div>
+      <hr>
+
+      <footer>
+        <p>Derek Schultz<span class="pull-right">RPI Affective Computing 2013</span></p>
+      </footer>
+    </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
+
+        <script src="js/vendor/bootstrap.min.js"></script>
+
+        <script src="js/main.js"></script>
+
+        <script>
+            var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+            g.src='//www.google-analytics.com/ga.js';
+            s.parentNode.insertBefore(g,s)}(document,'script'));
+        </script>
+    </body>
+</html>
