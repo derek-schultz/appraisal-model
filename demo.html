@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+            .app.container {
+              width: 970px;
+              max-width: 970px;
+            }
+            table.gauge-holder {
+              text-align: center;
+            }
+            .gauge-holder > table {
+              margin: 0 auto !important;
+            }
+            table.grid {
+              border-bottom: solid 1px black;
+              border-left: solid 1px black;
+              width: 100%;
+            }
+            table.grid td {
+              border-top: solid 1px black;
+              border-right: solid 1px black;
+              height: 55px;
+            }
+            table.grid td.path {
+              background: #CCFFCC;
+            }
+            table.grid td.blocked {
+              background: #D9534F;
+            }
+            table.grid td.waiter {
+              background: #CCCCFF;
+            }
+            div.restaurant {
+              position: relative;
+            }
+            img.waiter {
+              position: absolute;
+              width: 125px;
+              top: 275px;
+              left: -14px;
+              z-index: 999999;
+            }
+            img.table {
+              position: absolute;
+              width: 180px;
+              top: -95px;
+              right: -126px;
+              z-index: 9999999;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Computational Model of Appraisal</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="index.html">About</a></li>
+            <li class="active"><a href="demo.html">Demo</a></li>
+          </ul>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </div>
+
+    <div class="app container" style="margin-top: 50px">
+
+      <div class="btn-group play-toolbar" style="margin-bottom: 20px;">
+        <button type="button" class="btn btn-success start-btn">Start <span class="glyphicon glyphicon-play"></span></button>
+        <button type="button" class="btn btn-warning pause-btn">Pause <span class="glyphicon glyphicon-pause"></span></button>
+        <button type="button" class="btn btn-danger reset-btn">Reset <span class="glyphicon glyphicon-repeat"></span></button>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default dropdown-toggle sim-type-dropdown" data-toggle="dropdown">
+            Simulation Type: <span class="sim-type">Random</span>
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="#" class="random-btn">Random</a></li>
+            <li><a href="#" class="manual-btn">Manual</a></li>
+            <li><a href="#" class="joy-btn">Joy Specific</a></li>
+            <li><a href="#" class="frustration-btn">Frustration Specific</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-6">
+          <div class="well" style="padding-bottom: 0">
+            <table>
+              <tr>
+                <td style="vertical-align: top"><h3 style="margin: 0">Event:</h3></td>
+                <td>
+                  <ul>
+                    <li>Goal relevance: <span class="goal-relevance-var"></span></li>
+                    <li>Goal congruence: <span class="goal-congruence-var"></span></li>
+                  </ul>
+                </td>
+              </tr>
+            </table>
+            <h3 style="margin: 0">Current emotion: <span class="current_emotion"></span></h3>
+            <table class="table gauge-holder">
+              <tr>
+                <td>
+                  <h4><span class="label label-danger">Disappointment</span> <span class="label label-success">Relief</span></h4>
+                  <div id="dr_chart" class="gauge-holder"></div>
+                </td>
+                <td>
+                  <h4><span class="label label-danger">Frustration</span> <span class="label label-success">Joy</span></h4>
+                  <div id="fj_chart" class="gauge-holder"></div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <h4><span class="label label-danger">Despair</span> <span class="label label-success">Hope</span></h4>
+                  <div id="dh_chart" class="gauge-holder"></div>
+                </td>
+                <td>
+                  <h4><span class="label label-danger">Embarassment</span> <span class="label label-success">Pride</span></h4>
+                  <div id="ep_chart" class="gauge-holder"></div>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="col-xs-6">
+          <div class="restaurant">
+            <img class="table" src="img/table.png">
+            <img class="waiter" src="img/happy.png">
+            <table class="grid"></table>
+          </div>
+        </div>
+      </div>
+      
+      <hr>
+
+      <footer>
+        <p>Derek Schultz<span class="pull-right">RPI Affective Computing 2013</span></p>
+      </footer>
+    </div> <!-- /container -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
+
+        <script src="js/vendor/bootstrap.min.js"></script>
+        <script src="http://www.google.com/jsapi"></script>
+
+        <script src="js/a_star.js"></script>
+        <script src="js/appraisal_model.js"></script>
+        <script src="js/restaurant.js"></script>
+
+        <script src="js/main.js"></script>
+
+        <script>
+            var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+            g.src='http://www.google-analytics.com/ga.js';
+            s.parentNode.insertBefore(g,s)}(document,'script'));
+        </script>
+    </body>
+</html>

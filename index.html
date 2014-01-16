@@ -38,8 +38,8 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">About</a></li>
-            <li><a href="#">Demo</a></li>
+            <li class="active"><a href="index.html">About</a></li>
+            <li><a href="demo.html">Demo</a></li>
           </ul>
         </div><!--/.navbar-collapse -->
       </div>
@@ -50,23 +50,24 @@
       <div class="container">
         <h1>Computational Model of Appraisal</h1>
         <p>This project is an attempt at creating a computational appraisal model of the emotions of a virtual character. A robot waiter brings customers food while obstacles are added and removed. The waiter's emotions are altered in response to these random events.</p>
-        <p><a class="btn btn-primary btn-lg">Try the demo</a> <a class="btn btn-default btn-lg">Github</a></p>
+        <p><a class="btn btn-primary btn-lg" href="demo.html">Try the demo</a><!--<a class="btn btn-default btn-lg">Github</a>--></p>
       </div>
     </div>
 
     <div class="container">
 
       <h1>The Model</h1>
-      <p>For this specific scenario, eight especially relevant emotions were chosen. Taking an approach inline with <a href="http://en.wikipedia.org/wiki/Opponent-process_theory" target="_blank">opponent-process theory</a>, these eight emotions were organized into the following pairs.
+      <p>For this specific scenario, eight especially relevant emotions were chosen. Taking an approach inline with <a href="http://en.wikipedia.org/wiki/Opponent-process_theory" target="_blank">opponent-process theory</a>, these eight emotions were organized into opposing pairs. The chosen emotions are (loosely) inspired by <a href="http://en.wikipedia.org/wiki/Appraisal_theory#Roseman.27s_Theory_of_Appraisal" target="_blank">Roseman's Theory of Appraisal</a>.
 
-      <ul>
-        <li>Hope / Fear</li>
-        <li>Joy / Frustration</li>
-        <li>Relief / Disappointment</li>
-        <li>Pride / Embarassment</li>
-      </ul>
+      <table class="table">
+        <tr><th>Goal Congruent</th><th>Non-Congruent</th></tr>
+        <tr><td>Hope</td><td>Despair</td></tr>
+        <tr><td>Joy</td><td>Frustration</td></tr>
+        <tr><td>Relief</td><td>Disappointment</td></tr>
+        <tr><td>Pride</td><td>Embarassment</td></tr>
+      </table>
 
-      These emotional states are represented in the model using a number between -1 and +1 for each pair. For example, if the waiter is very hopeful: <code>hope_fear = 0.8</code>. If the waiter is somewhat fearful: <code>hope_fear = -0.3</code>.
+      These emotional states are represented in the model using a number between -1 and +1 for each pair. For example, if the waiter is very hopeful: <code>hope_despair = 0.8</code>. If the waiter has some degree of diespair: <code>hope_despair = -0.3</code>.
 
       </p>
 
@@ -82,8 +83,81 @@
 
       </p>
 
+      <p>The simulation is run in discrete steps. Each step proceeds as follows.</p>
+
+      <pre>function step:
+    if random() > DEFINED_LIKELIHOOD:
+        add_random_blockage()
+    if random() > DEFINED_LIKELIHOOD:
+        remove_random_blockage()
+
+    waiter.recalculate_path()
+    emotions = waiter.appraise()
+    gui.update(emotions)
+
+function waiter.appraise:
+    if elapsed_time > 0:
+        time_difference = previous_estimate - current_estimate
+        emotions.relief_disappointment = time_difference / previous_estimate
+
+    emotion.joy_frustration = (expected_time - (estimated_time + elapsed_time)) / expected_time
+
+    emotion.hope_despair = (0.75 * expected_time - elapsed_time) * 0.01 * abs(emotion.joy_frustration - 1)
+
+    if round is complete:
+        emotion.pride_embarassment = emotion.joy_frustration / (1 + customer_friendliness)
+
+    for each emotion:
+        deltas[emotion] = (prev_emotion_value - emotion) / prev_emotion_value
+    
+    deltas.sort()
+
+    return highest delta where sign(delta) == sign(emotion)</pre>
+
+      <h3>Relief / Disappointment</h3>
+      The first emotion calculated is relief/disappointment. This is an appraisal of how drastically the current event impacts progress. A sudden decrease in travel time would be a relief, whereas being rerouted 6 blocks when only 2 blocks away from finishing would be a big disappointment.
+      <pre>time_difference = previous_estimate - current_estimate
+emotions.relief_disappointment = time_difference / previous_estimate</pre>
+      It is simply the calculation of the percent change in time estimate for goal completion.
+
+      <h3>Joy / Frustration</h3>
+      This emotion is calculated by comparing initially projected progress to current progress. If things are ahead of schedule, the result is joy. If the path is slow going, it is a frustrating experience.
+      <pre>emotion.joy_frustration = (expected_time - (estimated_time + elapsed_time)) / expected_time</pre>
+
+      <h3>Hope / Despair</h3>
+      Hope/despair is a measure of progress with respect to time elapsed, which occurs when the path is blocked. Early on in the simulation, the robot will experience hope if the path is blocked. Later in the simulation, this will slide to despair as time remaining to accomplish the goal on schedule runs out.
+      <pre>if path_blocked:
+    time_remaining = expected_time - elapsed_time
+    hope_despair = time_remaining / estimated_time</pre>
+
+      <h3>Pride / Embarassment</h3>
+      Pride/embarassment is appraised only once the goal is complete. A variable for how friendly the customer is acts like an oversimplified theory of mind. The waiter takes into account the thoughts and expectations of the customer. <code>customer_friendliness</code> is a random number between 0.5 and 1.5 that varies round by round.
+      <pre>if goal_complete:
+    emotion.pride_embarassment = emotion.joy_frustration / customer_friendliness</pre>
+
+      <h1>Sample Cases</h1>
+      <p>The demo defaults to random block placement, but two predefined sample sequences are available to choose from. There is also a full manual mode where you can add and remove blocks by clicking on the board. <em>Note: you can always add and remove blocks by doing this, not just in manual mode. Manual mode simply prevents any blocks from being added or removed by the computer.</em></p>
+      <h3>Joy Specific</h3>
+      <p>The joy specific sequence is very simple. No blocks ever intrude with the robot's path, which is ideal. Note that joy is always positive and increasing as the robot moves through the path, never encountering any obstructions. At the end of the path, the robot experiences pride as it arrives sooner than it expected.</p>
+      <h3>Frustration Specific</h3>
+      <p>The frustration specific sequence is designed to demonstrate all the emotions not demonstrated in the joy sequence. Throughout this example the robot will experience frustration, disappointment, relief, hope, despair, and embarassment.
+
+      <ol>
+        <li>The robot proceeds upwards without any obstructions.</li>
+        <li>Once the robot has traveled to the top of the board, a piece blocks its path, causing it to retrace its steps to go around the obstruction. This causes the robot disappointment, as things were going well and were suddenly interrupted.</li>
+        <li>Next, the corner with the table is blocked off, leaving no possible path. The robot stops. The initial emotion is again disappointment. Hope increases, as it is still early enough in the simulation for things to improve and for the delivery to be made on time.</li>
+        <li>Frustration increases as time is wasted waiting for the path to clear. Hope changes to despair as the threshold is reached where the situation cannot improve in time for a timely delivery.</li>
+        <li>When the blocks clear, the robot feels relief.</li>
+        <li>When the delivery is made, the robot is embarassed because it is very late.</li>
+      </ol>
+
+      <em>Note: Because of my implementation of A* search, the path may change to an equally efficient option even when no blocks have interfered with it. Because the efficiency of the path does not change, this does not affect the robot's emotion, so it does not adversely affect the simulation.</em>
+
+      </p>
+
       <h1>The Interface</h1>
-      <p>The values of the emotion pairs are represented using gauges that update as events unfold. Line charts show the immediate history for each gauge. The emotion pair with the highest absolute value is represented on the face of the robot as it traverses the map. The following face is used to represent all four positive emotions.<br>
+      <p>The simulation is controlled using the toolbar in the top left. A dropdown menu allows you to change the pre-programmed block-placing sequence.</p>
+      <p>The values of the emotion pairs are represented using gauges that update as events unfold. The emotion with the most significant delta is represented on the face of the robot as it traverses the map. The following face is used to represent all four positive emotions.<br>
 
       <h4>Happy</h4>
       <img src="img/happy.png" alt="Positive Emotion" class="img-thumbnail">
@@ -93,17 +167,25 @@
       <p>Each of the four negative emotions has its own representation.</p>
 
       <div class="row">
-        <div class="col-md-3"><h4>Fearful</h4><img src="img/fear.png" alt="Positive Emotion" class="img-thumbnail"></div>
+        <div class="col-md-3"><h4>Despair</h4><img src="img/despair.png" alt="Positive Emotion" class="img-thumbnail"></div>
         <div class="col-md-3"><h4>Frustrated</h4><img src="img/frustration.png" alt="Positive Emotion" class="img-thumbnail"></div>
         <div class="col-md-3"><h4>Disappointed</h4><img src="img/disappointment.png" alt="Positive Emotion" class="img-thumbnail"></div>
         <div class="col-md-3"><h4>Embarassed</h4><img src="img/embarassment.png" alt="Positive Emotion" class="img-thumbnail"></div>
       </div>
+
+      <h1>System Requirements</h1>
+      <p>This project was built and tested using Google Chrome. While it <em>should</em> work on any modern browser (IE 9+), I can only guarantee that it will only function 100% properly with Chrome.</p>
+      <p>An internet connection is required to retrieve Google's chart libraries at runtime (for the gauges).</p>
+
+      <h1>Questions</h1>
+      <p>If you have any problems or questions, please send me an email: <a href="mailto:schuld6@rpi.edu">schuld6@rpi.edu</a>.
       <hr>
 
       <footer>
         <p>Derek Schultz<span class="pull-right">RPI Affective Computing 2013</span></p>
       </footer>
-    </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    </div> <!-- /container -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
 
         <script src="js/vendor/bootstrap.min.js"></script>
@@ -113,7 +195,7 @@
         <script>
             var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
             (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-            g.src='//www.google-analytics.com/ga.js';
+            g.src='http://www.google-analytics.com/ga.js';
             s.parentNode.insertBefore(g,s)}(document,'script'));
         </script>
     </body>
