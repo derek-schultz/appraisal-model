@@ -5,7 +5,7 @@ This project is an attempt at creating a computational appraisal model of the em
 A robot waiter brings customers food while obstacles are added and removed. The waiter's emotions are altered
 in response to these random events.
 
-[Try the demo](http://derekcomputer.com/projects/appraisal/demo.html)
+[Try the demo](http://derekcomputer.com/projects/appraisal/)
 
 The Model
 ---------
